@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Traductor Morse Completo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background-color: #f4f4f4;
+    }
+    h1 { color: darkblue; }
+    textarea { width: 80%; height: 100px; margin: 10px 0; padding: 10px; font-size: 16px; }
+    button { padding: 10px 20px; font-size: 16px; background-color: blue; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: darkblue; }
+    #output { margin-top: 20px; font-weight: bold; font-size: 18px; background: white; padding: 15px; border-radius: 10px; display: inline-block; min-width: 200px; }
+  </style>
+</head>
+<body>
+  <h1>Traductor Morse Completo</h1>
+  <p>Escribe texto o código Morse y tradúcelo automáticamente.</p>
+
+  <textarea id="input" placeholder="Escribe texto o Morse aquí..."></textarea><br>
+  <button id="translate">Traducir</button>
+
+  <div id="output">Aquí aparecerá la traducción...</div>
+
+  <script>
+    // Código Morse completo
+    const morseCode = {
+      "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
+      "F": "..-.", "G": "--.", "H": "....", "I": "..", "J": ".---",
+      "K": "-.-", "L": ".-..", "M": "--", "N": "-.", "O": "---",
+      "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-",
+      "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--",
+      "Z": "--..",
+      "0": "-----", "1": ".----", "2": "..---", "3": "...--", "4": "....-",
+      "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.",
+      ".": ".-.-.-", ",": "--..--", "?": "..--..", "'": ".----.", "!": "-.-.--",
+      ":": "---...", ";": "-.-.-.", "-": "-....-", "/": "-..-.", 
+      "(": "-.--.", ")": "-.--.-", "=": "-...-", "+": ".-.-.", "@": ".--.-.", 
+      "&": ".-...", " ": "/"
+    };
+
+    // Inverso: Morse → Texto
+    const reverseMorseCode = {};
+    for (const key in morseCode) {
+      reverseMorseCode[morseCode[key]] = key;
+    }
+
+    const inputField = document.getElementById("input");
+    const translateButton = document.getElementById("translate");
+    const outputField = document.getElementById("output");
+
+    translateButton.addEventListener("click", () => {
+      const inputText = inputField.value.trim().toUpperCase();
+      if (inputText === "") {
+        outputField.textContent = "⚠️ No escribiste nada.";
+        return;
+      }
+
+      // Detectar si es Morse (contiene . o -) o Texto
+      if (inputText.includes(".") || inputText.includes("-")) {
+        // Morse → Texto
+        const morseWords = inputText.split("/");
+        const translatedWords = morseWords.map((morseWord) => {
+          const morseChars = morseWord.trim().split(" ");
+          return morseChars.map((morseChar) => reverseMorseCode[morseChar] || "?").join("");
+        });
+        outputField.textContent = translatedWords.join(" ");
+      } else {
+        // Texto → Morse
+        const words = inputText.split(" ");
+        const translatedWords = words.map((word) => {
+          const chars = word.split("");
+          return chars.map((char) => morseCode[char] || "?").join(" ");
+        });
+        outputField.textContent = translatedWords.join(" / ");
+      }
+    });
+  </script>
+</body>
+</html>
